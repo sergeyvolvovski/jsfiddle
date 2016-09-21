@@ -148,7 +148,7 @@ function getSeriesData(result, colSpec, filterSpec) {
   for (i = 0; i < colInfo.length; ++i) {
     var info = colInfo[i].split(':');
     var key = info[0];
-    var colInd = parseInt(key[1]);
+    var colInd = parseInt(info[1]);
     columns.push({
       data: getColumn(result, colInd),
       key: key
