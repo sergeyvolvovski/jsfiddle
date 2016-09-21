@@ -173,7 +173,7 @@ function getSeriesData(result, colSpec, filterSpec) {
             value: parseInt(strFilters[i].substr(pos + filterOperators[j].length).trim())
           };
 
-          if (fiter.key.length > 0 && filter.colInd !== NaN) {
+          if (filter.key.length > 0 && filter.value !== NaN) {
             filters.push(filter);
           }
         }
