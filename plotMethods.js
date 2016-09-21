@@ -3,6 +3,8 @@
 var columnNames = [];
 var columnData = [];
 
+var filterOperators = ['=', '!=', '>', '<', '>=', '<='];
+
 function round(num, precision) {
   return precision === 0 ? Math.round(num) : Math.round(num * Math.pow(10, precision)) / Math.pow(10, precision);
 }
@@ -133,10 +135,11 @@ function getBubbleChartData(result, xCol, yCol, sizeCol, nameCol) {
 }
 
 /**
- *
+ * Returns the array of data in the form acceptable for series.data in highchart object
+ * 
  * @param {Object} result - object to retrive data from
- * @param {String} colSpec - associates result columns  with the keys in highchart series.data object , e.g. "x:1,y:2,name:0"
- * @param {String} filterSpec
+ * @param {String} colSpec - associates result columns with the keys in highchart series.data object , e.g. "x:1,y:2,name:0"
+ * @param {String} filterSpec - optional filter specs in string form, e.g. "x>0,y<=5". Should use the same keys as colSpec
  * @return (Array of Objects} [{x: 25}, y: 30},...]
  */
 function getSeriesData(result, colSpec, filterSpec) {
@@ -144,20 +147,38 @@ function getSeriesData(result, colSpec, filterSpec) {
   var data = [];
   var columns = [];
   var colInfo = colSpec.split(',');
-  var i;
+  var i, j;
   for (i = 0; i < colInfo.length; ++i) {
     var info = colInfo[i].split(':');
-    var key = info[0];
-    var colInd = parseInt(key[1]);
+    var key = info[0].trim();
+    var colInd = parseInt(info[1].trim());
     columns.push({
       data: getColumn(result, colInd),
       key: key
     });
   }
 
-  var filters = null;
+  var filters = [];
   if (filterSpec) {
-    // TODO: Convert a string to a set of rules
+    var strFilters = filterSpec.split(',');
+    for (i = 0; i < strFilters.length; ++i) {
+      var filter = null;
+      for (j = 0; !filter && j < filterOperators.length; ++j) {
+        var pos = strFilters[i].search(filterOperators[j]);
+        // Can use >0 because operator should be preceded with column index
+        if (pos > 0) {
+          filter = {
+            key: strFilters[i].substr(0, pos).trim(),
+            operator: filterOperators[j],
+            value: parseInt(strFilters[i].substr(pos + filterOperators[j].length).trim())
+          };
+
+          if (fiter.key.length > 0 && filter.colInd !== NaN) {
+            filters.push(filter);
+          }
+        }
+      }
+    }
   }
 
   // Assuming data for each column have the same length. If we have use case for a different need to implement some checkings
@@ -165,13 +186,41 @@ function getSeriesData(result, colSpec, filterSpec) {
 
   for (i = 0; i < dataSize; ++i) {
     var elem = {};
-    for (var j = 0; j < columns.length; ++j) {
+    for (j = 0; j < columns.length; ++j) {
       elem[columns[j].key] = columns[j].data[i];
     }
 
     var add = true;
-    if (filters) {
-      // TODO: Check whether or not we should filter data out and turn flag if yes
+    if (filters.length > 0) {
+      // Check whether or not we should filter data out and turn flag if yes
+      for (j = 0; add && j < filters.length; ++j) {
+        var key = filters[j].key;
+        if (elem.hasOwnProperty(key)) {
+          var valueToExamine = elem[key];
+          var filterValue = filters[j].value;
+
+          switch (filters[j].operator) {
+            case '=':
+              add = valueToExamine === filterValue;
+              break;
+            case '!=':
+              add = valueToExamine !== filterValue;
+              break;
+            case '<':
+              add = valueToExamine < filterValue;
+              break;
+            case '>':
+              add = valueToExamine > filterValue;
+              break;
+            case '<=':
+              add = valueToExamine <= filterValue;
+              break;
+            case '>=':
+              add = valueToExamine >= filterValue;
+              break;
+          }
+        }
+      }
     }
 
     if (add) {
