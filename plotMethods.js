@@ -124,10 +124,60 @@ function getBubbleChartData(result, xCol, yCol, sizeCol, nameCol) {
     data.push({
       x: round(columnX[i], 2),
       y: round(columnY[i], 2),
-      z: columnSize[i],
+      z: Math.abs(columnSize[i]),
       name: columnName[i],
       val: round(columnSize[i], 2)
     });
   }
+  return data;
+}
+
+/**
+ *
+ * @param {Object} result - object to retrive data from
+ * @param {String} colSpec - associates result columns  with the keys in highchart series.data object , e.g. "x:1,y:2,name:0"
+ * @param {String} filterSpec
+ * @return (Array of Objects} [{x: 25}, y: 30},...]
+ */
+function getSeriesData(result, colSpec, filterSpec) {
+  console.log('getting Series Data');
+  var data = [];
+  var columns = [];
+  var colInfo = colSpec.split(',');
+  var i;
+  for (i = 0; i < colInfo.length; ++i) {
+    var info = colInfo[i].split(':');
+    var key = info[0];
+    var colInd = parseInt(key[1]);
+    columns.push({
+      data: getColumn(result, colInd),
+      key: key
+    });
+  }
+
+  var filters = null;
+  if (filterSpec) {
+    // TODO: Convert a string to a set of rules
+  }
+
+  // Assuming data for each column have the same length. If we have use case for a different need to implement some checkings
+  var dataSize = columns[0].data.length;
+
+  for (i = 0; i < dataSize; ++i) {
+    var elem = {};
+    for (var j = 0; j < columns.length; ++j) {
+      elem[columns[j].key] = columns[j].data[i];
+    }
+
+    var add = true;
+    if (filters) {
+      // TODO: Check whether or not we should filter data out and turn flag if yes
+    }
+
+    if (add) {
+      data.push(elem);
+    }
+  }
+
   return data;
 }
