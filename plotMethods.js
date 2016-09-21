@@ -124,7 +124,7 @@ function getBubbleChartData(result, xCol, yCol, sizeCol, nameCol) {
     data.push({
       x: round(columnX[i], 2),
       y: round(columnY[i], 2),
-      z: Math.abs(columnSize[i]),
+      z: columnSize[i],
       name: columnName[i],
       val: round(columnSize[i], 2)
     });
