@@ -84,7 +84,7 @@ Plot.prototype.getColumn = function(colInd, dataOnly) {
 
     // Add names
     for (var i = 0; i < numColumns; ++i) {
-      columnData.push({
+      self.columnData.push({
         name: self.getColumnName(i),
         data: []
       });
