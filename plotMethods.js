@@ -9,8 +9,7 @@ function round(num, precision) {
   return precision === 0 ? Math.round(num) : Math.round(num * Math.pow(10, precision)) / Math.pow(10, precision);
 }
 
-function getResult(resultKey) {
-  var results = perspective.viewmodel.results();
+function getResult(results, resultKey) {
   return results.find(function(r) {return (r.Request && r.Request.resultsKey && r.Request.resultsKey === resultKey);});
 }
 
