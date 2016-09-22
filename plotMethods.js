@@ -1,40 +1,40 @@
 // ========= Globals ==========
+var columnNames = [];
+var columnData = [];
+
+var filterOperators = ['=', '!=', '>', '<', '>=', '<='];
+
+function round(num, precision) {
+  return precision === 0 ? Math.round(num) : Math.round(num * Math.pow(10, precision)) / Math.pow(10, precision);
+}
+
 var perspectivePlotLib = {
   
-  var columnNames = [];
-  var columnData = [];
-  
-  var filterOperators = ['=', '!=', '>', '<', '>=', '<='];
-  
-  function round(num, precision) {
-    return precision === 0 ? Math.round(num) : Math.round(num * Math.pow(10, precision)) / Math.pow(10, precision);
-  }
-  
-  var getResult = function(results, resultKey) {
+  getResult: function(results, resultKey) {
     return results.find(function(r) {return (r.Request && r.Request.resultsKey && r.Request.resultsKey === resultKey);});
-  }
+  },
   
   /**
    * Returns report name
    * @param {Object} result - the report object
    */
-  var getReportName = function(result) {
+  getReportName: function(result) {
     var name = "Untitled";
     if (result && result.ReportName) {
       name = result.ReportName
     }
     return name;
-  }
+  },
   
-  var getReportSubtitle = function(result) {
+  getReportSubtitle: function(result) {
     return result.Request.title;
-  }
+  },
   
-  var getNumColumns = function(result) {
+  getNumColumns: function(result) {
     return result.ReportResult.Leaves[0].Data.length;
-  }
+  },
   
-  var getColumnName = function(result, colInd) {
+  getColumnName: function(result, colInd) {
   
     function composeColumnNames() {
       var headers = result.Request.headers;
@@ -66,9 +66,9 @@ var perspectivePlotLib = {
   
     // Add validation -?
     return columnNames[colInd];
-  }
+  },
   
-  var getColumn = function(result, colInd, dataOnly) {
+  getColumn: function(result, colInd, dataOnly) {
   
     function createColumnData() {
       var numColumns = result.ReportResult.Leaves[0].Data.length;
@@ -101,9 +101,9 @@ var perspectivePlotLib = {
     }
   
     return dataOnly ? columnData[colInd].data : columnData[colInd];
-  }
+  },
   
-  var getScatterChartData = function(result, xCol, yCol, tipCol) {
+  getScatterChartData: function(result, xCol, yCol, tipCol) {
     console.log('getting Scatter Chart Data');
     var data = [];
     var columnX = getColumn(result, xCol);
@@ -118,9 +118,9 @@ var perspectivePlotLib = {
       data.push(point);
     }
     return data;
-  }
+  },
   
-  var getBubbleChartData = function(result, xCol, yCol, sizeCol, nameCol) {
+  getBubbleChartData: function(result, xCol, yCol, sizeCol, nameCol) {
     console.log('getting Bubble Chart Data');
     var data = [];
     var columnX = getColumn(result, xCol);
@@ -137,7 +137,7 @@ var perspectivePlotLib = {
       });
     }
     return data;
-  }
+  },
   
   /**
    * Returns the array of data in the form acceptable for series.data in highchart object
@@ -147,7 +147,7 @@ var perspectivePlotLib = {
    * @param {String} filterSpec - optional filter specs in string form, e.g. "x>0,y<=5". Should use the same keys as colSpec
    * @return (Array of Objects} [{x: 25}, y: 30},...]
    */
-  var getSeriesData = function(result, colSpec, filterSpec) {
+  getSeriesData: function(result, colSpec, filterSpec) {
     console.log('getting Series Data');
     var data = [];
     var columns = [];
