@@ -1,5 +1,5 @@
 // ========= Globals ==========
-var perspectivePlotMethods = {
+var perspectivePlotLib = {
   
   var columnNames = [];
   var columnData = [];
@@ -10,7 +10,7 @@ var perspectivePlotMethods = {
     return precision === 0 ? Math.round(num) : Math.round(num * Math.pow(10, precision)) / Math.pow(10, precision);
   }
   
-  function getResult(results, resultKey) {
+  var getResult = function(results, resultKey) {
     return results.find(function(r) {return (r.Request && r.Request.resultsKey && r.Request.resultsKey === resultKey);});
   }
   
@@ -18,7 +18,7 @@ var perspectivePlotMethods = {
    * Returns report name
    * @param {Object} result - the report object
    */
-  function getReportName(result) {
+  var getReportName = function(result) {
     var name = "Untitled";
     if (result && result.ReportName) {
       name = result.ReportName
@@ -26,15 +26,15 @@ var perspectivePlotMethods = {
     return name;
   }
   
-  function getReportSubtitle(result) {
+  var getReportSubtitle = function(result) {
     return result.Request.title;
   }
   
-  function getNumColumns(result) {
+  var getNumColumns = function(result) {
     return result.ReportResult.Leaves[0].Data.length;
   }
   
-  function getColumnName(result, colInd) {
+  var getColumnName = function(result, colInd) {
   
     function composeColumnNames() {
       var headers = result.Request.headers;
@@ -68,7 +68,7 @@ var perspectivePlotMethods = {
     return columnNames[colInd];
   }
   
-  function getColumn(result, colInd, dataOnly) {
+  var getColumn = function(result, colInd, dataOnly) {
   
     function createColumnData() {
       var numColumns = result.ReportResult.Leaves[0].Data.length;
@@ -103,7 +103,7 @@ var perspectivePlotMethods = {
     return dataOnly ? columnData[colInd].data : columnData[colInd];
   }
   
-  function getScatterChartData(result, xCol, yCol, tipCol) {
+  var getScatterChartData = function(result, xCol, yCol, tipCol) {
     console.log('getting Scatter Chart Data');
     var data = [];
     var columnX = getColumn(result, xCol);
@@ -120,7 +120,7 @@ var perspectivePlotMethods = {
     return data;
   }
   
-  function getBubbleChartData(result, xCol, yCol, sizeCol, nameCol) {
+  var getBubbleChartData = function(result, xCol, yCol, sizeCol, nameCol) {
     console.log('getting Bubble Chart Data');
     var data = [];
     var columnX = getColumn(result, xCol);
@@ -147,7 +147,7 @@ var perspectivePlotMethods = {
    * @param {String} filterSpec - optional filter specs in string form, e.g. "x>0,y<=5". Should use the same keys as colSpec
    * @return (Array of Objects} [{x: 25}, y: 30},...]
    */
-  function getSeriesData(result, colSpec, filterSpec) {
+  var getSeriesData = function(result, colSpec, filterSpec) {
     console.log('getting Series Data');
     var data = [];
     var columns = [];
