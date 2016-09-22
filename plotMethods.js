@@ -1,5 +1,5 @@
 // ========= Globals ==========
-perspectivePlotMethods = {
+var perspectivePlotMethods = {
   
   var columnNames = [];
   var columnData = [];
