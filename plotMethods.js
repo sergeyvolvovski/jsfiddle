@@ -131,10 +131,10 @@ Plot.prototype.getScatterChartData = function(xCol, yCol, tipCol) {
 Plot.prototype.getBubbleChartData = function(xCol, yCol, sizeCol, nameCol) {
   console.log('getting Bubble Chart Data');
   var data = [];
-  var columnX = this.getColumn(result, xCol);
-  var columnY = this.getColumn(result, yCol);
-  var columnSize = this.getColumn(result, sizeCol);
-  var columnName = this.getColumn(result, nameCol);
+  var columnX = this.getColumn(xCol);
+  var columnY = this.getColumn(yCol);
+  var columnSize = this.getColumn(sizeCol);
+  var columnName = this.getColumn(nameCol);
   for (var i = 0; i < columnX.length; ++i) {
     data.push({
       x: round(columnX[i], 2),
@@ -166,7 +166,7 @@ Plot.prototype.getSeriesData = function(colSpec, filterSpec) {
     var key = info[0].trim();
     var colInd = parseInt(info[1].trim());
     columns.push({
-      data: this.getColumn(result, colInd),
+      data: this.getColumn(colInd),
       key: key
     });
   }
