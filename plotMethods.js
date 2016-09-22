@@ -77,30 +77,31 @@ Plot.prototype.getColumnName = function(colInd) {
 };
 
 Plot.prototype.getColumn = function(colInd, dataOnly) {
+  var self = this;
 
   function createColumnData() {
-    var numColumns = this.result.ReportResult.Leaves[0].Data.length;
+    var numColumns = self.result.ReportResult.Leaves[0].Data.length;
 
     // Add names
     for (var i = 0; i < numColumns; ++i) {
       columnData.push({
-        name: this.getColumnName(i),
+        name: self.getColumnName(i),
         data: []
       });
     }
 
     // Add values
-    this.result.ReportResult.Leaves.forEach(function(leaf){
+    self.result.ReportResult.Leaves.forEach(function(leaf){
       // Filter out some values
       if (leaf.Data[1] !== 0 && leaf.Data[2] > 0) {
         for (var i = 0; i < numColumns; ++i) {
-          columnData[i].data.push(leaf.Data[i]);
+          self.columnData[i].data.push(leaf.Data[i]);
         }
       }
     });
   }
 
-  if (columnData.length === 0) {
+  if (this.columnData.length === 0) {
     createColumnData();
   }
 
@@ -108,7 +109,7 @@ Plot.prototype.getColumn = function(colInd, dataOnly) {
     dataOnly = true;
   }
 
-  return dataOnly ? columnData[colInd].data : columnData[colInd];
+  return dataOnly ? this.columnData[colInd].data : this.columnData[colInd];
 };
 
 Plot.prototype.getScatterChartData = function(xCol, yCol, tipCol) {
