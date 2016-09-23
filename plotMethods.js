@@ -1,12 +1,9 @@
+// Regex for testing filtration mask
 var MASK_REGEX = "^[x 0-9\a-z\.\:\(\)\=\!\"\'\&\|\<\>\+\*\-\/\%]*$";
-
-function round(num, precision) {
-  return precision === 0 ? Math.round(num) : Math.round(num * Math.pow(10, precision)) / Math.pow(10, precision);
-}
 
 /**
  * Constructs the result object
- * @param results - Array of Objects to retrieve result from
+ * @param results - Array of Objects to retrieve result from or a single object with the result
  * @param resultKey - String
  * @constructor
  */
@@ -18,6 +15,7 @@ var PerspectiveTable = function(results, resultKey) {
   if (Array.isArray(results)) {
     this.result = results.find(function(r) {return (r.Request && r.Request.resultsKey && r.Request.resultsKey === resultKey);});
   } else {
+    // Used for testing
     this.result = results;
   }
 
@@ -54,7 +52,7 @@ PerspectiveTable.prototype.getColumnName = function(colInd) {
     var subheaderInd = 0;
 
     function add(name) {
-      // Do we need to do anything (strip out the paranthesis)?
+      // Do we need to do anything (strip out the parenthesis)?
       self.columnNames.push(name);
     }
 
@@ -131,48 +129,45 @@ PerspectiveTable.prototype._isRowIncluded = function(index, mask) {
   return included;
 };
 
-PerspectiveTable.prototype.getColumn = function(colInd, dataOnly) {
+/**
+ * Returns column data with or w/o the coumn name
+ * @param colInd - the index of the column
+ * @param {String} mask - optional filter mask in string form, e.g. "x:1 > 0 && x:2 <= 5 ...".
+ * @param {Boolean} dataOnly - optional flag saying whether ot not return data only or data and column name
+ * @returns {Array||Object}
+ */
+PerspectiveTable.prototype.getColumn = function(colInd, mask, dataOnly) {
+  if (mask === undefined) {
+    mask = null;
+    dataOnly = true;
+  } else if (typeof(mask) === 'boolean') {
+    mask = null;
+    dataOnly = mask;
+  } else if (typeof(mask !== 'string')) {
+    mask = null;
+  }
+
   if (dataOnly === undefined) {
     dataOnly = true;
   }
 
-  return dataOnly ? this.columnData[colInd].data : this.columnData[colInd];
-};
-
-PerspectiveTable.prototype.getScatterChartData = function(xCol, yCol, tipCol) {
-  console.log('getting Scatter Chart Data');
-  var data = [];
-  var columnX = this.getColumn(xCol);
-  var columnY = this.getColumn(yCol);
-  var tips = tipCol === undefined ? null : this.getColumn(tipCol);
-  for (var i = 0; i < columnX.length; ++i) {
-    //data.push([c1[i], c2[i]]);
-    var point = {x: columnX[i], y: columnY[i]};
-    if (tips) {
-      point.name = tips[i];
+  var column;
+  if (mask) {
+    column = dataOnly ? [] : {name: this.getColumnName(colInd), data: []};
+    for (var i = 0; i < this.columnData[colInd].length; ++i) {
+      if (this._isRowIncluded(i, mask)) {
+        if (dataOnly) {
+          column.push(this.columnData[colInd].data[i])
+        } else {
+          column.data.push(this.columnData[colInd].data[i])
+        }
+      }
     }
-    data.push(point);
+  } else {
+    column = dataOnly ? this.columnData[colInd].data : this.columnData[colInd];
   }
-  return data;
-};
 
-PerspectiveTable.prototype.getBubbleChartData = function(xCol, yCol, sizeCol, nameCol) {
-  console.log('getting Bubble Chart Data');
-  var data = [];
-  var columnX = this.getColumn(xCol);
-  var columnY = this.getColumn(yCol);
-  var columnSize = this.getColumn(sizeCol);
-  var columnName = this.getColumn(nameCol);
-  for (var i = 0; i < columnX.length; ++i) {
-    data.push({
-      x: round(columnX[i], 2),
-      y: round(columnY[i], 2),
-      z: Math.abs(columnSize[i]),
-      name: columnName[i],
-      val: round(columnSize[i], 2)
-    });
-  }
-  return data;
+  return column;
 };
 
 /**
