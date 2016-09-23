@@ -116,19 +116,11 @@ PerspectiveTable.prototype._isRowIncluded = function(index, mask) {
   }
 
   if (temp) {
-    var data = [];
     for (var i = 0; i < this.columnData.length; ++i) {
-      data.push(this.columnData[i].data[index]);
-      //temp = temp.split("x:" + i).join(this.columnData[i].data[index]);
-      //console.log(this.columnData[i].data, temp);
-    }
-    for (var i = 0; i < this.columnData.length; ++i) {
-      //temp = temp.split("x:" + i).join(this.columnData[i].data[index]);
-      temp = temp.split("x:" + i).join(data[i]);
-      //console.log(this.columnData[i].data, temp);
+      temp = temp.split("x:" + i).join(this.columnData[i].data[index]);
     }
     included = new Function('return ' + temp)();
-      console.log(data, temp, included);
+    console.log(temp, included);
   }
 
   return included;
@@ -207,6 +199,7 @@ PerspectiveTable.prototype.getSeriesData = function(colList, mask) {
       for (var j = 0; j < columns.length; ++j) {
         point[columns[j].key] = columns[j].data[i];
       }
+      console.log(point, included);
     }
     data.push(point);
   }
