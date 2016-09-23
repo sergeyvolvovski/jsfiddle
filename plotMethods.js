@@ -126,7 +126,6 @@ PerspectiveTable.prototype._isRowIncluded = function(index, mask) {
       temp = temp.split("x:" + i).join(this.columnData[i].data[index]);
     }
     included = new Function('return ' + temp)();
-    console.log(temp, included);
   }
 
   return included;
