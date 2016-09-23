@@ -127,34 +127,6 @@ PerspectiveTable.prototype._isRowIncluded = function(index, mask) {
 };
 
 PerspectiveTable.prototype.getColumn = function(colInd, dataOnly) {
-  // var self = this;
-  //
-  // function createColumnData() {
-  //   var numColumns = self.result.ReportResult.Leaves[0].Data.length;
-  //
-  //   // Add names
-  //   for (var i = 0; i < numColumns; ++i) {
-  //     self.columnData.push({
-  //       name: self.getColumnName(i),
-  //       data: []
-  //     });
-  //   }
-  //
-  //   // Add values
-  //   self.result.ReportResult.Leaves.forEach(function(leaf){
-  //     // Filter out some values
-  //     if (leaf.Data[1] !== 0 && leaf.Data[2] > 0) {
-  //       for (var i = 0; i < numColumns; ++i) {
-  //         self.columnData[i].data.push(leaf.Data[i]);
-  //       }
-  //     }
-  //   });
-  // }
-  //
-  // if (this.columnData.length === 0) {
-  //   createColumnData();
-  // }
-  //
   if (dataOnly === undefined) {
     dataOnly = true;
   }
@@ -217,91 +189,20 @@ PerspectiveTable.prototype.getSeriesData = function(colList, mask) {
       key: key
     });
   }
-  // var colInfo = colSpec.split(',');
-  // var i, j;
-  // for (i = 0; i < colInfo.length; ++i) {
-  //   var info = colInfo[i].split(':');
-  //   var key = info[0].trim();
-  //   var colInd = parseInt(info[1].trim());
-  //   columns.push({
-  //     data: this.getColumn(colInd),
-  //     key: key
-  //   });
-  // }
-
-  // var filters = [];
-  // if (filterSpec) {
-  //   var strFilters = filterSpec.split(',');
-  //   for (i = 0; i < strFilters.length; ++i) {
-  //     var filter = null;
-  //     for (j = 0; !filter && j < filterOperators.length; ++j) {
-  //       var pos = strFilters[i].search(filterOperators[j]);
-  //       // Can use >0 because operator should be preceded with column index
-  //       if (pos > 0) {
-  //         filter = {
-  //           key: strFilters[i].substr(0, pos).trim(),
-  //           operator: filterOperators[j],
-  //           value: parseInt(strFilters[i].substr(pos + filterOperators[j].length).trim())
-  //         };
-  //
-  //         if (filter.key.length > 0 && filter.value !== NaN) {
-  //           filters.push(filter);
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
 
   // Assuming data for each column have the same length. If we have use case for a different need to implement some checkings
   var dataSize = columns[0].data.length;
 
-  for (i = 0; i < dataSize; ++i) {
+  for (var i = 0; i < dataSize; ++i) {
     if (this._isRowIncluded(i, mask)) {
       var point = {};
-      for (j = 0; j < columns.length; ++j) {
+      for (var j = 0; j < columns.length; ++j) {
         point[columns[j].key] = columns[j].data[i];
       }
     }
     data.push(point);
-
-    // var add = true;
-    // if (filters.length > 0) {
-    //   // Check whether or not we should filter data out and turn flag if yes
-    //   for (j = 0; add && j < filters.length; ++j) {
-    //     var key = filters[j].key;
-    //     if (elem.hasOwnProperty(key)) {
-    //       var valueToExamine = elem[key];
-    //       var filterValue = filters[j].value;
-    //
-    //       switch (filters[j].operator) {
-    //         case '=':
-    //           add = valueToExamine === filterValue;
-    //           break;
-    //         case '!=':
-    //           add = valueToExamine !== filterValue;
-    //           break;
-    //         case '<':
-    //           add = valueToExamine < filterValue;
-    //           break;
-    //         case '>':
-    //           add = valueToExamine > filterValue;
-    //           break;
-    //         case '<=':
-    //           add = valueToExamine <= filterValue;
-    //           break;
-    //         case '>=':
-    //           add = valueToExamine >= filterValue;
-    //           break;
-    //       }
-    //     }
-    //   }
-    // }
-
-    // if (add) {
-    //   data.push(elem);
-    // }
   }
 
-  console.log("Size of data: ", data.length);
+  //console.log("Size of data: ", data.length);
   return data;
 };
