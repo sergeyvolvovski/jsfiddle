@@ -199,9 +199,8 @@ PerspectiveTable.prototype.getSeriesData = function(colList, mask) {
       for (var j = 0; j < columns.length; ++j) {
         point[columns[j].key] = columns[j].data[i];
       }
-      console.log(point, included);
+      data.push(point);
     }
-    data.push(point);
   }
 
   //console.log("Size of data: ", data.length);
