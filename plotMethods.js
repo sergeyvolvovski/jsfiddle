@@ -111,7 +111,7 @@ PerspectiveTable.prototype._isRowIncluded = function(index, mask) {
   // Check if we have valid filter mask
   var included = true;
   var temp = null;
-  if (mask && typeof(mask) !== "string" && new RegExp(MASK_REGEX, 'i').test(mask)) {
+  if (mask && typeof(mask) === "string" && new RegExp(MASK_REGEX, 'i').test(mask)) {
     temp = new String(mask);
   }
 
