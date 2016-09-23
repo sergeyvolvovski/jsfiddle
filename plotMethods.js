@@ -81,8 +81,7 @@ PerspectiveTable.prototype.getColumnName = function(colInd) {
 };
 
 /**
- *
- * @param mask
+ * Creates column data from the result object
  * @private
  */
 PerspectiveTable.prototype._createData = function(){
@@ -107,6 +106,13 @@ PerspectiveTable.prototype._createData = function(){
   }
 };
 
+/**
+ * Checks whether or not row should be included
+ * @param index - index in the column data
+ * @param mask - filter mask to check data against
+ * @returns {boolean}
+ * @private
+ */
 PerspectiveTable.prototype._isRowIncluded = function(index, mask) {
   // Check if we have valid filter mask
   var included = true;
@@ -149,7 +155,7 @@ PerspectiveTable.prototype.getScatterChartData = function(xCol, yCol, tipCol) {
     data.push(point);
   }
   return data;
-},
+};
 
 PerspectiveTable.prototype.getBubbleChartData = function(xCol, yCol, sizeCol, nameCol) {
   console.log('getting Bubble Chart Data');
@@ -203,6 +209,5 @@ PerspectiveTable.prototype.getSeriesData = function(colList, mask) {
     }
   }
 
-  //console.log("Size of data: ", data.length);
   return data;
 };
