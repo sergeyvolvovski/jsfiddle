@@ -216,7 +216,7 @@ PerspectiveTable.prototype.getSeriesData = function(colList, mask) {
  * @param {Array of objects} colList - associates result columns with the keys in highchart series.data object , e.g. [{x:1}, {y:2}, {name:0}]
  * @param {Boolean} hasHeader - optional, indicates whether or not first elem of colList is a header. Defaults to false
  */
-PerspectiveTable.prototype.getTooltip = function(type, colList, hasHeader) {
+PerspectiveTable.prototype.getTooltip = function(type, colList, options) {
   var tooltip;
 
   switch (type) {
@@ -231,7 +231,7 @@ PerspectiveTable.prototype.getTooltip = function(type, colList, hasHeader) {
   return tooltip;
 };
 
-PerspectiveTable.prototype._getHtmpTypeTooltip = function(colList, hasHeader) {
+PerspectiveTable.prototype._getHtmpTypeTooltip = function(colList, options) {
 
   function getColumnIndex(num) {
     return colList[num][Object.keys(colList[num])[0]];
@@ -241,13 +241,24 @@ PerspectiveTable.prototype._getHtmpTypeTooltip = function(colList, hasHeader) {
     return Object.keys(colList[num])[0];
   }
 
+  var hasHeader = options && options.header === true ? true : false;
+  var followPointer = options && options.followPointer === true ? true : false;
+  var shared = options && options.shared === true ? true : false;
+
   var tooltip = {
     useHTML: true,
     headerFormat: '<table>',
     pointFormat: '',
     footerFormat: '</table>',
-    followPointer: true
+ //   followPointer: true
   };
+
+  if (followPointer) {
+    tooltip.followPointer = followPointer;
+  }
+  if (shared) {
+    tooltip.shared = shared;
+  }
 
   var i = 0;
   if (hasHeader) {
