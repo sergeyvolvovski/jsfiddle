@@ -221,7 +221,7 @@ PerspectiveTable.prototype.getTooltip = function(type, colList, options) {
 
   switch (type) {
     case 'HTML':
-      tooltip = this._getHtmpTypeTooltip(colList, hasHeader);
+      tooltip = this._getHtmpTypeTooltip(colList, options);
       break;
     default:
       console.log('"' + type + '" is not recognized as a valid type of tooltip.');
@@ -274,7 +274,7 @@ PerspectiveTable.prototype._getHtmpTypeTooltip = function(colList, options) {
     } else if (type === 'string') {
       tooltip.pointFormat = '<tr><th>' + this.getColumnName(index) + ': {point.' + getColumnKey(i) + '}</th></tr>';
     } else {
-
+      console.log('Unsupported type of column value', type);
     }
   }
 
