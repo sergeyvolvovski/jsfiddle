@@ -13,7 +13,8 @@ var PerspectiveTable = function(results, resultKey) {
   this.columnData = [];
 
   if (Array.isArray(results)) {
-    // CheckIi!!
+    //////////////////
+    // TODO: CheckIi!! Might not working with IE
     //////////////////
     this.result = results.find(function(r) {return (r.Request && r.Request.resultsKey && r.Request.resultsKey === resultKey);});
   } else {
@@ -215,14 +216,6 @@ PerspectiveTable.prototype.getSeriesData = function(colList, mask) {
  * @param {Boolean} hasHeader - optional, indicates whether or not first elem of colList is a header. Defaults to false
  */
 PerspectiveTable.prototype.getTooltip = function(type, colList, hasHeader) {
-  // tooltip: {
-  //   pointFormat: '<tr><th align="center", colspan="2"><h3>' + table.getColumnName(0) + ': {point.name}</h3></th></tr>' +
-  //   //pointFormat: '<tr><th>' + table.getColumnName(0) + ': {point.name}</th></tr>' +
-  //   '<tr><th>' + table.getColumnName(7) + ': </th><td align="right">{point.x:.2f}</td></tr>' +
-  //   '<tr><th>' + table.getColumnName(8) + ': </th><td align="right">{point.y:.2f}</td></tr>' +
-  //   '<tr><th>' + table.getColumnName(1) + ': </th><td align="right">{point.val:.2f}</td></tr>',
-  // },
-
   var tooltip;
 
   switch (type) {
