@@ -147,7 +147,7 @@ PerspectiveTable.prototype.getColumn = function(colInd, mask, dataOnly) {
   } else if (typeof(mask) === 'boolean') {
     mask = null;
     dataOnly = mask;
-  } else if (typeof(mask !== 'string')) {
+  } else if (typeof(mask) !== 'string') {
     mask = null;
   }
 
