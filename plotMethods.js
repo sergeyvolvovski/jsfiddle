@@ -140,6 +140,7 @@ PerspectiveTable.prototype._isRowIncluded = function(index, mask) {
  * @returns {Array||Object}
  */
 PerspectiveTable.prototype.getColumn = function(colInd, mask, dataOnly) {
+  console.log('getting Column', colInd, 'data');
   if (mask === undefined) {
     mask = null;
     dataOnly = true;
