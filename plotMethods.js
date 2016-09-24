@@ -158,7 +158,7 @@ PerspectiveTable.prototype.getColumn = function(colInd, mask, dataOnly) {
   var column;
   if (mask) {
     column = dataOnly ? [] : {name: this.getColumnName(colInd), data: []};
-    for (var i = 0; i < this.columnData[colInd].length; ++i) {
+    for (var i = 0; i < this.columnData[colInd].data.length; ++i) {
       if (this._isRowIncluded(i, mask)) {
         if (dataOnly) {
           column.push(this.columnData[colInd].data[i])
