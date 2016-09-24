@@ -240,11 +240,11 @@ PerspectiveTable.prototype.getTooltip = function(type, colList, hasHeader) {
 PerspectiveTable.prototype._getHtmpTypeTooltip = function(colList, hasHeader) {
 
   function getColumnIndex(num) {
-    return colList[ind][Object.keys(colList[ind])[0]];
+    return colList[num][Object.keys(colList[num])[0]];
   }
 
   function getColumnKey(num) {
-    return Object.keys(colList[ind])[0];
+    return Object.keys(colList[num])[0];
   }
 
   var tooltip = {
