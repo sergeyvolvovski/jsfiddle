@@ -268,7 +268,7 @@ PerspectiveTable.prototype._getHtmpTypeTooltip = function(colList, options) {
     var index = getColumnIndex(i);
     var type = this._getColumnType(index);
     if (type === 'number') {
-      tooltip.pointFormat += ('<tr><th>' + this.getColumnName(index) + ': </th><td align="right">{point.' + getColumnKey(i) + ':.2f}</td></tr>');
+      tooltip.pointFormat += ('<tr><td>' + this.getColumnName(index) + ': </td><td align="right">{point.' + getColumnKey(i) + ':.2f}</td></tr>');
     } else if (type === 'string') {
       tooltip.pointFormat = '<tr><th>' + this.getColumnName(index) + ': {point.' + getColumnKey(i) + '}</th></tr>';
     } else {
