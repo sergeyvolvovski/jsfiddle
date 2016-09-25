@@ -241,7 +241,7 @@ PerspectiveTable.prototype._getHtmpTypeTooltip = function(colList, options) {
     return Object.keys(colList[num])[0];
   }
 
-  var hasHeader = options && options.header === true ? true : false;
+  var header = options && options.header ? options.header : null;
   var followPointer = options && options.followPointer === true ? true : false;
   var shared = options && options.shared === true ? true : false;
 
@@ -260,13 +260,11 @@ PerspectiveTable.prototype._getHtmpTypeTooltip = function(colList, options) {
     tooltip.shared = shared;
   }
 
-  var i = 0;
-  if (hasHeader) {
-    i = 1;
-    tooltip.pointFormat = '<tr><th align="center", colspan="2"><h3>' + this.getColumnName(getColumnIndex(0)) + ': {point.' + getColumnKey(0) + '}</h3></th></tr>';
+  if (header) {
+    tooltip.pointFormat = this._getTooltipHeader(getColumnIndex(0), getColumnKey(0));  //'<tr><th align="center", colspan="2"><h3>' + this.getColumnName(getColumnIndex(0)) + ': {point.' + getColumnKey(0) + '}</h3></th></tr>';
   }
 
-  for ( ; i < colList.length; ++i) {
+  for(var i = header ? 1 : 0; i < colList.length; ++i) {
     var index = getColumnIndex(i);
     var type = this._getColumnType(index);
     if (type === 'number') {
@@ -279,6 +277,10 @@ PerspectiveTable.prototype._getHtmpTypeTooltip = function(colList, options) {
   }
 
   return tooltip;
+};
+
+PerspectiveTable.prototype._getTooltipHeader = function(colInd, colKey) {
+  return '<tr><th align="center", colspan="2"><h3>' + this.getColumnName(colInd + ': {point.' + colKey) + '}</h3></th></tr>';
 };
 
 PerspectiveTable.prototype._getColumnType = function(colInd) {
