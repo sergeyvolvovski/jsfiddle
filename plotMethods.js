@@ -230,6 +230,7 @@ PerspectiveTable.prototype.getTooltip = function(options, colList) {
       }
       break;
     case 'column':
+      tooltip = this._getColumnChartTooltip(options && options.headerCol ? options.headerCol : 0);
       break;
     default:
       console.log('Unimplemented for chart type', charttype);
@@ -332,11 +333,16 @@ PerspectiveTable.prototype._getHtmpTypeTooltip = function(colList, hasHeader) {
 //   return tooltip;
 // };
 
-PerspectiveTable.prototype._getColumnChartTooltip = function() {
-  var tooltip;
+PerspectiveTable.prototype._getColumnChartTooltip = function(headerCol) {
+  var tooltip = {
+    headerFormat: '<tr><center><h3>'+ table.getColumnName(headerCol) + ': {point.key}</h3></center></tr><table>',
+    pointFormat: '<tr><td>{series.name}: </td><td align="right">{point.y:.2f}</td></tr>',
+    footerFormat: '</table>',
+    shared: true,
+    useHTML: true
+  };
 
   return tooltip
-  //return typeof(this.columnData[colInd].data[0]);
 };
 
 
