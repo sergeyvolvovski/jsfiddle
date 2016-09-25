@@ -280,7 +280,8 @@ PerspectiveTable.prototype._getHtmpTypeTooltip = function(colList, options) {
 };
 
 PerspectiveTable.prototype._getTooltipHeader = function(colInd, colKey) {
-  return '<tr><th align="center", colspan="2"><h3>' + this.getColumnName(colInd) + ': {point.' + colKey + '}</h3></th></tr>';
+  //return '<tr><th align="center", colspan="2"><h3>' + this.getColumnName(colInd) + ': {point.' + colKey + '}</h3></th></tr>';
+  return '<tr><center><h3>' + this.getColumnName(colInd) + ': {point.' + colKey + '}</h3></center></tr>';
 };
 
 PerspectiveTable.prototype._getColumnType = function(colInd) {
