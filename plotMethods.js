@@ -218,8 +218,8 @@ PerspectiveTable.prototype.getSeriesData = function(colList, mask) {
  */
 PerspectiveTable.prototype.getTooltip = function(options, colList) {
   var tooltip = {};
-  var type = options && optins.type ? optins.type : 'html';
-  var chartType = options && optins.chart ? optins.chart : 'column';
+  var type = options && options.type ? options.type : 'html';
+  var chartType = options && options.chart ? options.chart : 'column';
   switch (chartType) {
     case 'bubble':
     case 'scatter':
