@@ -334,15 +334,13 @@ PerspectiveTable.prototype._getHtmpTypeTooltip = function(colList, hasHeader) {
 // };
 
 PerspectiveTable.prototype._getColumnChartTooltip = function(headerCol) {
-  var tooltip = {
-    headerFormat: '<tr><center><h3>'+ table.getColumnName(headerCol) + ': {point.key}</h3></center></tr><table>',
+  return {
+    headerFormat: '<tr><center><h3>'+ this.getColumnName(headerCol) + ': {point.key}</h3></center></tr><table>',
     pointFormat: '<tr><td>{series.name}: </td><td align="right">{point.y:.2f}</td></tr>',
     footerFormat: '</table>',
     shared: true,
     useHTML: true
   };
-
-  return tooltip
 };
 
 
