@@ -212,9 +212,8 @@ PerspectiveTable.prototype.getSeriesData = function(colList, mask) {
 
 /**
  *
- * @param {String} type - type of header {html|....}
+ * @param {Object} options
  * @param {Array of objects} colList - associates result columns with the keys in highchart series.data object , e.g. [{x:1}, {y:2}, {name:0}]
- * @param {Boolean} hasHeader - optional, indicates whether or not first elem of colList is a header. Defaults to false
  */
 PerspectiveTable.prototype.getTooltip = function(options, colList) {
   var tooltip = {};
@@ -235,15 +234,6 @@ PerspectiveTable.prototype.getTooltip = function(options, colList) {
     default:
       console.log('Unimplemented for chart type', charttype);
   }
-
-  // switch (type) {
-  //   case 'HTML':
-  //     tooltip = this._getHtmpTypeTooltip(colList, options);
-  //     break;
-  //   default:
-  //     console.log('"' + type + '" is not recognized as a valid type of tooltip.');
-  //     tooltip = {};
-  // }
 
   return tooltip;
 };
@@ -285,54 +275,6 @@ PerspectiveTable.prototype._getHtmpTypeTooltip = function(colList, hasHeader) {
   return tooltip;
 };
 
-// PerspectiveTable.prototype._getHtmpTypeTooltip = function(colList) {
-//
-//   function getColumnIndex(num) {
-//     return colList[num][Object.keys(colList[num])[0]];
-//   }
-//
-//   function getColumnKey(num) {
-//     return Object.keys(colList[num])[0];
-//   }
-//
-//   var header = options && options.header ? options.header : null;
-//   var followPointer = options && options.followPointer === true ? true : false;
-//   var shared = options && options.shared === true ? true : false;
-//
-//   var tooltip = {
-//     useHTML: true,
-//     headerFormat: '<table>',
-//     pointFormat: '',
-//     footerFormat: '</table>',
-//  //   followPointer: true
-//   };
-//
-//   if (followPointer) {
-//     tooltip.followPointer = followPointer;
-//   }
-//   if (shared) {
-//     tooltip.shared = shared;
-//   }
-//
-//   if (header) {
-//     tooltip.headerFormat = this._getTooltipHeader(getColumnIndex(0), getColumnKey(0));  //'<tr><th align="center", colspan="2"><h3>' + this.getColumnName(getColumnIndex(0)) + ': {point.' + getColumnKey(0) + '}</h3></th></tr>';
-//   }
-//
-//   for(var i = header ? 1 : 0; i < colList.length; ++i) {
-//     var index = getColumnIndex(i);
-//     var type = this._getColumnType(index);
-//     if (type === 'number') {
-//       tooltip.pointFormat += ('<tr><td>' + this.getColumnName(index) + ': </td><td align="right">{point.' + getColumnKey(i) + ':.2f}</td></tr>');
-//     } else if (type === 'string') {
-//       tooltip.pointFormat = '<tr><th>' + this.getColumnName(index) + ': {point.' + getColumnKey(i) + '}</th></tr>';
-//     } else {
-//       console.log('Unsupported type of column value', type);
-//     }
-//   }
-//
-//   return tooltip;
-// };
-
 PerspectiveTable.prototype._getColumnChartTooltip = function(headerCol) {
   return {
     headerFormat: '<tr><center><h3>'+ this.getColumnName(headerCol) + ': {point.key}</h3></center></tr><table>',
@@ -342,12 +284,6 @@ PerspectiveTable.prototype._getColumnChartTooltip = function(headerCol) {
     useHTML: true
   };
 };
-
-
-// PerspectiveTable.prototype._getTooltipHeader = function(colInd, colKey) {
-//   //return '<tr><th align="center", colspan="2"><h3>' + this.getColumnName(colInd) + ': {point.' + colKey + '}</h3></th></tr>';
-//   return '<tr><center><h3>' + this.getColumnName(colInd) + ': {point.' + colKey + '}</h3></center></tr><table>';
-// };
 
 PerspectiveTable.prototype._getColumnType = function(colInd) {
   return typeof(this.columnData[colInd].data[0]);

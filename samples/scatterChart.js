@@ -8,8 +8,8 @@ $(function () {
         },
         legend: {
             enabled: false
-        },
-        title: {
+       },
+       title: {
             text: table.getReportName(),
         },
         subtitle: {
@@ -29,7 +29,7 @@ $(function () {
                 text: table.getColumnName(8)
             }
         },
-        tooltip: table.getTooltip('HTML', [{name: 0}, {x: 1}, {y: 8}], true),
+        tooltip: table.getTooltip({type: 'html', chart: 'scatter', header: true}, [{name: 0}, {x: 1}, {y: 8}]),
         plotOptions: {
             series: {
                 dataLabels: {

@@ -16,14 +16,7 @@ $(function () {
             categories: table.getColumn(0, filter),
             crosshair: true
         },
-        /*tooltip: table.getTooltip('HTML', [{name: 0}, {x: 7}, {y: 8}, {val: 1}], {header: true, shared: true}),*/
-        tooltip: {
-            headerFormat: '<tr><center><h3>'+ table.getColumnName(0) + ': {point.key}</h3></center></tr><table>',
-            pointFormat: '<tr><td>{series.name}: </td><td align="right">{point.y:.2f}</td></tr>',
-            footerFormat: '</table>',
-            shared: true,
-            useHTML: true
-        },
+        tooltip: table.getTooltip({type: 'html', chart: 'column', headerCol: 0}),
         plotOptions: {
             column: {
                 pointPadding: 0.2,
@@ -45,7 +38,6 @@ $(function () {
         }, {
             name: table.getColumnName(8),
             data: table.getColumn(8, filter),
-
         }]
     });
 });
