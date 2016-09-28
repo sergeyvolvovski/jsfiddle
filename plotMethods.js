@@ -292,12 +292,12 @@ PerspectiveTable.prototype._getColumnType = function(colInd) {
 };
 
 /**
- * Creates an instance
+ * Factory method
  * @param results - Array of Objects to retrieve result from the array of objects or a single object with the result
  * @param resultKey - String
  * @return {Object} - instance if success, null otherwise
  */
-function createTable(results, resultKey) {
+function createPerspectiveTable(results, resultKey) {
   var instance = new PerspectiveTable(results, resultKey);
   if (!instance.result) {
     console.log('Failed to create PerspectiveTable instance');
