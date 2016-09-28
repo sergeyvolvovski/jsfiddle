@@ -22,7 +22,9 @@ var PerspectiveTable = function(results, resultKey) {
     this.result = results;
   }
 
-  this._createData();
+  if (this.result) {
+    this._createData();
+  }
 
   // TODO: extract all other properties we may need and get rid of the original object
 
@@ -288,3 +290,18 @@ PerspectiveTable.prototype._getColumnChartTooltip = function(headerCol) {
 PerspectiveTable.prototype._getColumnType = function(colInd) {
   return typeof(this.columnData[colInd].data[0]);
 };
+
+/**
+ * Creates an instance
+ * @param results - Array of Objects to retrieve result from the array of objects or a single object with the result
+ * @param resultKey - String
+ * @return {Object} - instance if success, null otherwise
+ */
+function createTable(results, resultKey) {
+  var instance = new PerspectiveTable(results, resultKey);
+  if (!instance.result) {
+    console.log('Failed to create PerspectiveTable instance');
+    instance = null;
+  }
+  return instance;
+}
