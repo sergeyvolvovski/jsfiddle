@@ -1,6 +1,9 @@
 $(function () {
-	var table = new PerspectiveTable(results);
-
+		var table = createPerspectiveTable(results);
+    
+    if (!table) {
+    	return;
+    }
     $('#container').highcharts({
         chart: {
             type: 'scatter',
@@ -43,4 +46,6 @@ $(function () {
             data: table.getSeriesData({x: 1, y: 8, name: 0}, 'x:1 != 0 && x:2 > 0')                    }]
     });
 });
+
+
 

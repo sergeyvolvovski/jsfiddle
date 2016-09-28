@@ -1,8 +1,12 @@
 $(function () {
-	var table = new PerspectiveTable(results);
+		var table = createPerspectiveTable(results);
+    if (!table) {
+    	return;
+    }
+    
     var filter = "x:1 != 0 && x:2 > 0";
 
-	$('#container').highcharts({
+		$('#container').highcharts({
         chart: {
             type: 'column'
         },
@@ -20,7 +24,9 @@ $(function () {
         plotOptions: {
             column: {
                 pointPadding: 0.2,
-                borderWidth: 0
+                borderWidth: 0,
+                // Play with this 
+                //pointWidth: 5
             }
         },
         series: [{
