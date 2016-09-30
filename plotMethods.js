@@ -9,7 +9,7 @@ var MASK_REGEX = "^[x 0-9\a-z\.\:\(\)\=\!\"\'\&\|\<\>\+\*\-\/\%]*$";
  */
 var PerspectiveTable = function(results, resultKey) {
   this.result = null;
-  this.columnNames = [];
+  this.columnNames = null;
   this.columnData = [];
 
   if (Array.isArray(results)) {
@@ -61,26 +61,29 @@ PerspectiveTable.prototype.getColumnName = function(colInd) {
       self.columnNames.push(name);
     }
 
-    for (var i = 0; i < headers.length; ++i) {
-      var name = headers[i].label;
-      if (typeof(headers[i].colspan) === 'number') {
-        for (var j = 0; j < headers[i].colspan; ++j) {
-          var subname = subheaders[subheaderInd++].label;
-          add(name + ' ' + subname);
+    if (headers && Array.isArray(headers)) {
+      for (var i = 0; i < headers.length; ++i) {
+        var name = headers[i].label;
+        if (headers[i].colspan) {
+          var numSubheaders = parseInt(headers[i].colspan);
+          for (var j = 0; j < numSubheaders; ++j) {
+            var subname = subheaders[subheaderInd++].label;
+            add(name + ' ' + subname);
+          }
+        } else {
+          add(name);
+          ++subheaderInd;
         }
-      } else {
-        add(name);
-        ++subheaderInd;
       }
     }
   }
 
-  if (this.columnNames.length === 0) {
+  if (this.columnNames === null) {
+    this.columnNames = [];
     composeColumnNames();
   }
 
-  // Add validation -?
-  return this.columnNames[colInd];
+  return colInd >= 0 && colInd < this.columnNames.length ? this.columnNames[colInd] : '';
 };
 
 /**
