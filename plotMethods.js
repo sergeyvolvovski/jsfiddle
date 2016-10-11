@@ -7,24 +7,23 @@ var MASK_REGEX = "^[x 0-9\a-z\.\:\(\)\=\!\"\'\&\|\<\>\+\*\-\/\%]*$";
  * @param resultKey - String
  * @constructor
  */
-var PerspectiveTable = function(results, resultKey) {
-  this.result = null;
+var PerspectiveTable = function(results, resultKey = null, rowResultKeyPattern = null) {
+  this.reportName = "";
+  this.reportSubtitle = "";
   this.columnNames = null;
+  this.subcolumnNames = null;
   this.columnData = [];
 
   if (Array.isArray(results)) {
-    //////////////////
-    // TODO: CheckIi!! Might not working with IE
-    //////////////////
-    this.result = results.find(function(r) {return (r.Request && r.Request.resultsKey && r.Request.resultsKey === resultKey);});
+    if (rowResultKeyPattern) {
+      this._createDataFromMultipleRows(results, rowResultKeyPattern);    
+    } else {
+      var result = results.find(function(r) {return (r.Request && r.Request.resultsKey && r.Request.resultsKey === resultKey);});
+      this._createData(result);
+    }
   } else {
-    // Used for testing
-    this.result = results;
-  }
-
-  if (this.result) {
-    this._createData();
-  }
+    this._createData(results);
+  } 
 
   // TODO: extract all other properties we may need and get rid of the original object
 
@@ -32,85 +31,97 @@ var PerspectiveTable = function(results, resultKey) {
 };
 
 PerspectiveTable.prototype.getReportName = function() {
-  var name = "Untitled";
-  if (this.result && this.result.ReportName) {
-    name = this.result.ReportName;
-  }
-  return name;
+   return this.reportName;
 };
 
 PerspectiveTable.prototype.getReportSubtitle = function() {
-  return this.result.Request.title;
+  return this.reportSubtitle;
 };
 
 PerspectiveTable.prototype.getNumColumns = function() {
-  return this.result.ReportResult.Leaves[0].Data.length;
+  return this.columnData.length;
 };
 
 PerspectiveTable.prototype.getColumnName = function(colInd) {
-
-  var self = this;
-
-  function composeColumnNames() {
-    var headers = self.result.Request.headers;
-    var subheaders = self.result.Request.subheaders;
-    var subheaderInd = 0;
-
-    function add(name) {
-      // Do we need to do anything (strip out the parenthesis)?
-      self.columnNames.push(name);
-    }
-
-    if (headers && Array.isArray(headers)) {
-      for (var i = 0; i < headers.length; ++i) {
-        var name = headers[i].label;
-        if (headers[i].colspan) {
-          var numSubheaders = parseInt(headers[i].colspan);
-          for (var j = 0; j < numSubheaders; ++j) {
-            var subname = subheaders[subheaderInd++].label;
-            add(name + ' ' + subname);
-          }
-        } else {
-          add(name);
-          ++subheaderInd;
-        }
-      }
-    }
-  }
-
-  if (this.columnNames === null) {
-    this.columnNames = [];
-    composeColumnNames();
-  }
-
   return colInd >= 0 && colInd < this.columnNames.length ? this.columnNames[colInd] : '';
+};
+
+PerspectiveTable.prototype.getSubcolumnName = function(colInd) {
+  return colInd >= 0 && colInd < this.subcolumnNames.length ? this.subcolumnNames[colInd] : '';
 };
 
 /**
  * Creates column data from the result object
  * @private
  */
-PerspectiveTable.prototype._createData = function(){
-  if (this.columnData.length === 0) {
-    var numColumns = this.result.ReportResult.Leaves[0].Data.length;
+PerspectiveTable.prototype._createData = function(result) {
+  if (result && this.columnData.length === 0) {
 
-    // Add names
-    for (var i = 0; i < numColumns; ++i) {
-      this.columnData.push({
-        name: this.getColumnName(i),
-        data: []
-      });
-    }
-
-    // Add values
-    var self = this;
-    this.result.ReportResult.Leaves.forEach(function(leaf){
-      for (var i = 0; i < numColumns; ++i) {
-        self.columnData[i].data.push(leaf.Data[i]);
+    this.reportName = result.ReportName || "";
+    this.reportSubtitle = (result.Request && result.Request.title) ? result.Request.title : "";
+      
+    this.columnNames = this._composeColumnNames(result);
+    this.subcolumnNames = this._composeColumnNames(result, true);
+    for (var j = 0; j < this.columnNames.length; ++j) {
+      this.columnData.push({name: this.columnNames[j], data: []});
+      for (var i = 0; i < result.ReportResult.Leaves.length; ++i) {
+         // assuming we can have nulls only in value columns, not in name
+         this.columnData[j].data.push(result.ReportResult.Leaves[i].Data[j] || 0);
       }
-    });
+    }
   }
 };
+
+PerspectiveTable.prototype._createDataFromMultipleRows = function(results, rowResultKeyPattern)
+{
+   var regex = new RegExp(rowResultKeyPattern);
+   var numColumns = 0;
+   try {
+    for (var r = 0; r < results.length; r++) {
+       var result = results[r];
+       if (result.Request && result.Request.resultsKey && result.Request.resultsKey.match(regex)) { 
+          // Initialize numColumns if not already
+          if (numColumns <= 0) { 
+             numColumns = result.ReportResult.Leaves[0].Data.length;
+             this._createData(result);
+          } else if (result.ReportResult.Leaves[0].Data.length === numColumns) {
+             for (var j = 0; j < this.columnNames.length; ++j) {
+               for (var i = 0; i < result.ReportResult.Leaves.length; ++i) {
+                  this.columnData[j].data.push(result.ReportResult.Leaves[i].Data[j]);
+               }
+             }
+          }          
+       }
+    }
+  } catch (e) {
+    debugger;  
+  }
+}
+
+PerspectiveTable.prototype._composeColumnNames = function(result, subheadersOnly = false) 
+{
+   var columnNames = [];
+   var headers = result.Request.headers;
+   var subheaders = result.Request.subheaders;
+   var subheaderInd = 0;
+
+   if (headers && Array.isArray(headers)) {
+      for (var i = 0; i < headers.length; ++i) {
+        var name = headers[i].label;
+        if (headers[i].colspan) {
+          var numSubheaders = parseInt(headers[i].colspan);
+          for (var j = 0; j < numSubheaders; ++j) {
+            var subname = subheaders[subheaderInd++].label;
+            columnNames.push(subheadersOnly ? subname : (name + ' ' + subname));
+          }
+        } else {
+          columnNames.push(subheadersOnly ? '' : name);
+          ++subheaderInd;
+        }
+     }
+  }
+  return columnNames;
+}
 
 /**
  * Checks whether or not row should be included
@@ -145,7 +156,6 @@ PerspectiveTable.prototype._isRowIncluded = function(index, mask) {
  * @returns {Array||Object}
  */
 PerspectiveTable.prototype.getColumn = function(colInd, mask, dataOnly) {
-  console.log('getting Column', colInd, 'data');
   if (mask === undefined) {
     mask = null;
     dataOnly = true;
@@ -188,7 +198,6 @@ PerspectiveTable.prototype.getColumn = function(colInd, mask, dataOnly) {
  * @return (Array of Objects} [{x: 25, y: 30},...]
  */
 PerspectiveTable.prototype.getSeriesData = function(colList, mask) {
-  console.log('getting Series Data');
   var data = [];
   var columns = [];
 
@@ -262,7 +271,9 @@ PerspectiveTable.prototype._getHtmpTypeTooltip = function(colList, hasHeader) {
   };
 
   if (hasHeader) {
-    tooltip.pointFormat = '<tr><th align="center", colspan="2"><h3>' + this.getColumnName(getColumnIndex(0)) + ': {point.' + getColumnKey(0) + '}</h3></th></tr>';
+    var colName = this.getColumnName(getColumnIndex(0)).trim();
+    if (colName.length > 0) {colName += ': ';}
+    tooltip.pointFormat = '<tr><th align="center", colspan="2"><h3>' + colName + '{point.' + getColumnKey(0) + '}</h3></th></tr>';
   }
 
   for (var i = hasHeader ? 1 : 0 ; i < colList.length; ++i) {
@@ -302,9 +313,46 @@ PerspectiveTable.prototype._getColumnType = function(colInd) {
  */
 function createPerspectiveTable(results, resultKey) {
   var instance = new PerspectiveTable(results, resultKey);
-  if (!instance.result) {
+  if (!instance.columnData || instance.columnData.length === 0) {
     console.log('Failed to create PerspectiveTable instance');
     instance = null;
   }
   return instance;
 }
+
+function createPerspectiveTableFromMultipleRows(results, rowResultKeyPattern) {
+  var instance = new PerspectiveTable(results, null, rowResultKeyPattern);
+  if (!instance.columnData || instance.columnData.length === 0) {
+    console.log('Failed to create PerspectiveTable instance');
+    instance = null;
+  }
+  return instance;
+}
+
+function createPerspectiveTableMap(results, resultKeyArray) {
+  tableMap = {};
+  for (var k = 0; k < resultKeyArray.length; k++) {
+    var instance = new PerspectiveTable(result, resultKeyArray[k]);
+    if (instance && instance.columnData.length) {
+      tableMap[result.Request.resultsKey] = instance;
+    }
+  }
+  return tableMap;
+}
+
+function createPerspectiveTableMapByPattern(results, resultKeyPattern) {
+
+  tableMap = {};
+  var regex = new RegExp(resultKeyPattern);
+  for (var r = 0; r < results.length; r++) {
+    var result = results[r];
+    if (result.Request && result.Request.resultsKey && result.Request.resultsKey.match(regex)) { 
+       var instance = new PerspectiveTable(result);
+       if (instance && instance.columnData.length) {
+          tableMap[result.Request.resultsKey] = instance;
+       }
+    }
+  }
+  return tableMap;
+}
+
