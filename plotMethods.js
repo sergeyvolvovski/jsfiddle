@@ -66,7 +66,7 @@ PerspectiveTable.prototype._createData = function(result) {
       this.columnData.push({name: this.columnNames[j], data: []});
       for (var i = 0; i < result.ReportResult.Leaves.length; ++i) {
          // assuming we can have nulls only in value columns, not in name
-         this.columnData[j].data.push(result.ReportResult.Leaves[i].Data[j] || 0);
+         this.columnData[j].data.push(result.ReportResult.Leaves[i].Data[j]);
       }
     }
   }
